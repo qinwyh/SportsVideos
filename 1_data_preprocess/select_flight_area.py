@@ -5,14 +5,14 @@ from matplotlib.widgets import Button
 from matplotlib.patches import Rectangle
 import json
 
-VIDEO_PATH = '..\input\single_view.mp4'
-SAVE_DIR = '..\metadata'
+VIDEO_PATH = '.\input\single_view.mp4'
+SAVE_DIR = '.\metadata'
 os.makedirs(SAVE_DIR, exist_ok=True)
 
 # Read all frames into memory
 cap = cv2.VideoCapture(VIDEO_PATH)
 frames = []
-while True:
+while True and len(frames) < 100:
     ret, frame = cap.read()
     if not ret:
         break
