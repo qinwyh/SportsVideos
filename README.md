@@ -17,6 +17,14 @@ Ball and human detection in this project are implemented using [YOLOv5](https://
 git submodule update --init
 ```
 
+Installation dependencies include:
+- Python 3.8+
+- PyTorch
+- OpenCV
+
+```bash
+git install -r requirements.txt
+```
 
 ## TODO
 **This repository is under construction.**
