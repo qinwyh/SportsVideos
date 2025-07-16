@@ -23,7 +23,7 @@ Installation dependencies include:
 - OpenCV
 
 ```bash
-git install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ## TODO
