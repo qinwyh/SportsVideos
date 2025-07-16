@@ -4,4 +4,5 @@ __pycache__/
 *$py.class
 
 # Input data file
+input/
 **/single_view.mp4

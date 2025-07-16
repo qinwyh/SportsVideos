@@ -31,7 +31,6 @@ pip install -r requirements.txt
 
 Select the `ball_flight_area` and `rim` interactively via the graphical user interface. All related data files are saved in the `./metadata` directory.
 
-
 ```bash
 python 1_data_preprocess/select_flight_area.py
 ```
@@ -39,6 +38,11 @@ python 1_data_preprocess/select_flight_area.py
 **Example of selecting the `ball_flight_area` and `rim` via the GUI:**
 ![Selection Example](./assets/selected_ball_flight_area.png)
 
+Next, the position of the basketball in each frame is detected a YOLO-based model. The YOLO weights used for basketball detection are referenced from the [Stardust87/basketball-detection](https://github.com/Stardust87/basketball-detection) repository (MIT License).
+
+```bash
+python 1_data_preprocess/detect_basketball.py
+```
 
 ## TODO
 
