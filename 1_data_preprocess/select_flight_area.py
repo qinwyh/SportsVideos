@@ -5,8 +5,8 @@ from matplotlib.widgets import Button
 from matplotlib.patches import Rectangle
 import json
 
-VIDEO_PATH = 'test_single_view.mp4'
-SAVE_DIR = 'metadata'
+VIDEO_PATH = '..\input\single_view.mp4'
+SAVE_DIR = '..\metadata'
 os.makedirs(SAVE_DIR, exist_ok=True)
 
 # Read all frames into memory

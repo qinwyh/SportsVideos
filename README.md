@@ -18,6 +18,7 @@ git submodule update --init
 ```
 
 Installation dependencies include:
+
 - Python 3.8+
 - PyTorch
 - OpenCV
@@ -27,4 +28,11 @@ pip install -r requirements.txt
 ```
 
 ## TODO
+
 **This repository is under construction.**
+
+## Sample Immediate Results
+
+**Reconstructed 3D Motion**
+![Reconstructed 3D Motion 1](./assets/masked_3D_reconstruction_example_1.gif)
+![Reconstructed 3D Motion 2](./assets/masked_3D_reconstruction_example_2.gif)
