@@ -29,7 +29,7 @@ pip install -r requirements.txt
 
 ## 1. Data Preprocessing
 
-Select the `ball_flight_area` and `rim` interactively via the graphical user interface. All related data files are then saved in the `./metadata` directory.
+**a.** Select the `ball_flight_area` and `rim` interactively via the graphical user interface. All related data files are then saved in the `./metadata` directory.
 
 ```bash
 python 1_data_preprocess/select_flight_area.py
@@ -38,25 +38,25 @@ python 1_data_preprocess/select_flight_area.py
 **Example of selecting the `ball_flight_area` and `rim` via the GUI:**
 ![Selection Example](./assets/selected_ball_flight_area.png)
 
-Next, the position of the basketball in each frame is detected using a YOLOv5-based model.
+**b.** Next, the position of the basketball in each frame is detected using a YOLOv5-based model.
 The YOLO weights used for basketball detection are referenced from the [Stardust87/basketball-detection](https://github.com/Stardust87/basketball-detection) repository (MIT License).
 
 ```bash
 python 1_data_preprocess/detect_basketball.py
 ```
 
-The detection results (bounding box information for the basketball in each frame) are saved in the `./output/single_view/labels` directory.
+**c.** The detection results (bounding box information for the basketball in each frame) are saved in the `./output/single_view/labels` directory.
 
 **Sample Ball Detection Result:**
 ![Ball Detection](./assets/ball_detection_result.gif)
 
-Finally, the `segment_shooting_videos.py` script automatically segments all shooting sequences based on the continuous flight of the basketball within the `ball_flight_area`. The results are saved in `./output/single_view/ball_flight_segments.json`.
+**d.** Finally, the `segment_shooting_videos.py` script automatically segments all shooting sequences based on the continuous flight of the basketball within the `ball_flight_area`. The results are saved in `./output/single_view/ball_flight_segments.json`.
 
 ```bash
 python 1_data_preprocess/segment_shooting_videos.py
 ```
 
-(OPTIONAL) Use `extract_video.py` to extract all segment videos from the input video, which will be saved as `./output/single_view/segments/single_view_xxx.mp4`. Manual checking can be performed to further improve the results.
+**e.** (OPTIONAL) Use `extract_video.py` to extract all segment videos from the input video, which will be saved as `./output/single_view/segments/single_view_xxx.mp4`. Manual checking can be performed to further improve the results.
 
 ```bash
 python 1_data_preprocess/extract_video.py
@@ -66,12 +66,10 @@ python 1_data_preprocess/extract_video.py
 
 - TODO
 
-## TODO
-
-**This repository is under construction.**
-
-## Sample Immediate Results
-
 **Reconstructed 3D Motion:**
 ![Reconstructed 3D Motion 1](./assets/masked_3D_reconstruction_example_1.gif)
 ![Reconstructed 3D Motion 2](./assets/masked_3D_reconstruction_example_2.gif)
+
+## TODO
+
+**This repository is under construction.**

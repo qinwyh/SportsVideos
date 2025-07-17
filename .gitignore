@@ -6,3 +6,6 @@ __pycache__/
 # Input data file
 input/
 **/single_view.mp4
+
+# Output data file (remove redundancy)
+*.txt
