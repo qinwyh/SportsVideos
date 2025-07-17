@@ -3,11 +3,13 @@ from pathlib import Path
 import cv2
 
 # Path settings
-video_path = Path("single_view.mp4")
+video_path = Path("input/single_view.mp4")
+input_path = Path("input") / video_path.stem
+images_dir = input_path / "raw_images"
+
 output_path = Path("output") / video_path.stem
 labels_dir = output_path / "labels"
 metadata_dir = Path("metadata")
-images_dir = output_path / "raw_images"
 
 # Gather all images as frame base
 images_list = sorted(images_dir.glob("*.jpg"))

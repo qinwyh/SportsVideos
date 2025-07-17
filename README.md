@@ -27,9 +27,9 @@ Installation dependencies include:
 pip install -r requirements.txt
 ```
 
-## 1. Select Ball Flight Area
+## 1. Data Preprocessing
 
-Select the `ball_flight_area` and `rim` interactively via the graphical user interface. All related data files are saved in the `./metadata` directory.
+Select the `ball_flight_area` and `rim` interactively via the graphical user interface. All related data files are then saved in the `./metadata` directory.
 
 ```bash
 python 1_data_preprocess/select_flight_area.py
@@ -38,14 +38,33 @@ python 1_data_preprocess/select_flight_area.py
 **Example of selecting the `ball_flight_area` and `rim` via the GUI:**
 ![Selection Example](./assets/selected_ball_flight_area.png)
 
-Next, the position of the basketball in each frame is detected a YOLO-based model. The YOLO weights used for basketball detection are referenced from the [Stardust87/basketball-detection](https://github.com/Stardust87/basketball-detection) repository (MIT License).
+Next, the position of the basketball in each frame is detected using a YOLOv5-based model.
+The YOLO weights used for basketball detection are referenced from the [Stardust87/basketball-detection](https://github.com/Stardust87/basketball-detection) repository (MIT License).
 
 ```bash
 python 1_data_preprocess/detect_basketball.py
 ```
 
-**Ball Detection Result:**
+The detection results (bounding box information for the basketball in each frame) are saved in the `./output/single_view/labels` directory.
+
+**Sample Ball Detection Result:**
 ![Ball Detection](./assets/ball_detection_result.gif)
+
+Finally, the `segment_shooting_videos.py` script automatically segments all shooting sequences based on the continuous flight of the basketball within the `ball_flight_area`. The results are saved in `./output/single_view/ball_flight_segments.json`.
+
+```bash
+python 1_data_preprocess/segment_shooting_videos.py
+```
+
+(OPTIONAL) Use `extract_video.py` to extract all segment videos from the input video, which will be saved as `./output/single_view/segments/single_view_xxx.mp4`. Manual checking can be performed to further improve the results.
+
+```bash
+python 1_data_preprocess/extract_video.py
+```
+
+## 2. Shooter Filtering and Human Motion Reconstruction
+
+- TODO
 
 ## TODO
 
