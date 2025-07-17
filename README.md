@@ -44,6 +44,9 @@ Next, the position of the basketball in each frame is detected a YOLO-based mode
 python 1_data_preprocess/detect_basketball.py
 ```
 
+**Ball Detection Result:**
+![Ball Detection](./assets/ball_detection_result.gif)
+
 ## TODO
 
 **This repository is under construction.**
