@@ -97,6 +97,10 @@ We have used the 4D-Humans method in this pipeline and cite their work as follow
 }
 ```
 
+**d.** Finally, we convert the output `.pkl` files to `.fbx` format using the open-source work of [CEB_4d_Humans](https://github.com/carlosedubarreto/CEB_4d_Humans) (MIT License). The converted `.fbx` files are saved in the same directory.
+
+## Trajectory Estimation
+
 ## TODO
 
 **This repository is under construction.**
