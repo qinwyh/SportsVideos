@@ -73,11 +73,29 @@ python 2_shooter_filtering/filter_shooters.py
 **Masked Video After Shooter Filtering:**
 ![Masked Video](./assets/masked_single_view_example.gif)
 
-- TODO
+**b.** (OPTIONAL) Re-detect the ball position based on the masked video to improve accuracy.
+
+**c.** All masked videos are processed with [4D-Humans](https://github.com/shubham-goel/4D-Humans) (MIT License) to extract the shooter’s motion from each monocular shooting video.
+
+- The motion data for each segment is saved as a `.pkl` file in  
+  `output/single_view/motion_data/masked_single_view_{segment_index}.pkl`.
+- The visualization results are saved as  
+  `output/single_view/motion_data/PHALP_masked_single_view_{segment_index}.mp4`.
 
 **Reconstructed 3D Motion:**
 ![Reconstructed 3D Motion 1](./assets/masked_3D_reconstruction_example_1.gif)
 ![Reconstructed 3D Motion 2](./assets/masked_3D_reconstruction_example_2.gif)
+
+We have used the 4D-Humans method in this pipeline and cite their work as follows:
+
+```bibtex
+@inproceedings{goel2023humans,
+    title={Humans in 4{D}: Reconstructing and Tracking Humans with Transformers},
+    author={Goel, Shubham and Pavlakos, Georgios and Rajasegaran, Jathushan and Kanazawa, Angjoo and Malik, Jitendra},
+    booktitle={ICCV},
+    year={2023}
+}
+```
 
 ## TODO
 
