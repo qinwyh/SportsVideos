@@ -5,9 +5,9 @@ import numpy as np
 from ultralytics import YOLO
 
 # Load start_frame for first five segments to calculate average release point
-segments_json = Path("ball_flight_segments.json")
+segments_json = Path("output/single_view/ball_flight_segments.json")
 labels_dir = Path("output/single_view/labels")
-raw_images_dir = Path("output/single_view/raw_images")
+raw_images_dir = Path("input/single_view/raw_images")
 with open(segments_json) as f:
     segments = json.load(f)
 start_frames = [seg["start_frame"] for seg in segments[:5]]
@@ -45,11 +45,11 @@ if not ball_positions:
 avg_release = tuple(np.mean(ball_positions, axis=0).astype(int))
 print(f"Average release point: {avg_release}")
 
-input_videos_dir = Path("single_segments")
-output_videos_dir = Path("masked_single_segments")
+input_videos_dir = Path("output/single_view/segments")
+output_videos_dir = Path("output/single_view/masked_segments")
 output_videos_dir.mkdir(parents=True, exist_ok=True)
 
-yolo = YOLO('yolov8x.pt')  # Use default confidence threshold
+yolo = YOLO('weight/yolov8x.pt')  # Use default confidence threshold
 
 PADDING = 10  # Shooter box padding in pixels
 

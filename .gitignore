@@ -9,3 +9,6 @@ input/
 
 # Output data file (remove redundancy)
 *.txt
+
+# YOLO weight file
+weight/yolov8x.pt

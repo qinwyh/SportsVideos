@@ -64,6 +64,15 @@ python 1_data_preprocess/extract_video.py
 
 ## 2. Shooter Filtering and Human Motion Reconstruction
 
+**a.** Player and ball positions are detected using YOLO. Only the shooter is retained, with other detected persons masked in gray. The masked videos are saved as `./output/single_view/masked_segments/masked_single_view_xxx.mp4`. This helps to avoid interference from non-shooter players during subsequent motion reconstruction.
+
+```bash
+python 2_shooter_filtering/filter_shooters.py
+```
+
+**Masked Video After Shooter Filtering:**
+![Masked Video](./assets/masked_single_view_example.gif)
+
 - TODO
 
 **Reconstructed 3D Motion:**

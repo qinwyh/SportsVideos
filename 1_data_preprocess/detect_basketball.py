@@ -20,19 +20,19 @@ print("Extracting images from the video:")
 cap = cv2.VideoCapture(video_path)
 total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-# frame_idx = 1
-# with tqdm(total=total_frames, desc="Extracting frames") as pbar:
-#     while True:
-#         ret, frame = cap.read()
-#         if not ret or frame_idx > total_frames:
-#             break
-#         img_name = f"{frame_idx:05d}.jpg"
-#         img_path = raw_images_path / img_name
-#         cv2.imwrite(str(img_path), frame)
-#         frame_idx += 1
-#         pbar.update(1)
-# cap.release()
-# print(f"Extracted {frame_idx-1} frames to {raw_images_path}")
+frame_idx = 1
+with tqdm(total=total_frames, desc="Extracting frames") as pbar:
+    while True:
+        ret, frame = cap.read()
+        if not ret or frame_idx > total_frames:
+            break
+        img_name = f"{frame_idx:05d}.jpg"
+        img_path = raw_images_path / img_name
+        cv2.imwrite(str(img_path), frame)
+        frame_idx += 1
+        pbar.update(1)
+cap.release()
+print(f"Extracted {frame_idx-1} frames to {raw_images_path}")
 
 
 # Detect basketball by YOLO_v5
