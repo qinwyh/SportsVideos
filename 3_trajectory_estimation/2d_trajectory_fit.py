@@ -5,14 +5,14 @@ from pathlib import Path
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 
-DIST_THRES = 60  # Neighbor distance threshold, in pixels
+DIST_THRES = 100  # Neighbor distance threshold, in pixels
 RESIDUAL_THRES = 40  # Fitted-curve residual threshold, in pixels
 
-segments_path = Path("ball_flight_segments.json")
+raw_images_dir = Path("input/single_view/raw_images")
+segments_path = Path("output/single_view/ball_flight_segments.json")
 labels_dir = Path("output/single_view/labels")
-raw_images_dir = Path("output/single_view/raw_images")
 rim_meta_path = Path("metadata/frame_rim_meta.json")
-traj_save_dir = Path("output/2d_fitted_trajectory")
+traj_save_dir = Path("output/single_view/2d_fitted_trajectory")
 traj_save_dir.mkdir(parents=True, exist_ok=True)
 
 with open(rim_meta_path) as f:
@@ -44,6 +44,19 @@ def fit_parabola(xs, ys):
         return a * x**2 + b * x + c
     params, _ = curve_fit(parab, xs, ys)
     return params
+
+def remove_outliers(points, threshold=3.0):
+    """Remove outlier points based on distance jumps (using MAD)."""
+    arr = np.array(points)
+    diffs = np.linalg.norm(np.diff(arr, axis=0), axis=1)
+    median_diff = np.median(diffs)
+    mad = np.median(np.abs(diffs - median_diff))
+    keep = np.ones(len(arr), dtype=bool)
+    for i, d in enumerate(diffs):
+        if mad > 0 and np.abs(d - median_diff) / mad > threshold:
+            keep[i+1] = False  # Mark the large-jump point as outlier
+    filtered = arr[keep]
+    return filtered
 
 for seg in segments:
     seg_idx = seg["segment_index"]
@@ -90,7 +103,6 @@ for seg in segments:
                 center = last_point
                 box = last_box
             else:
-                # If no previous center, search forward for a detected center
                 for f2 in range(frame_id + 1, end_frame + 1):
                     label_file2 = labels_dir / f"{f2:05d}.txt"
                     if label_file2.exists():
@@ -108,13 +120,12 @@ for seg in segments:
                                     break
                     if center is not None:
                         break
-        if center is not None:
+        if center is not None and center[0] > int(iw * 0.1):
             points.append(center)
             boxes.append(box)
             frame_ids.append(frame_id)
             last_point = center
             last_box = box
-            # Stop collecting points if the ball box overlaps the rim
             if box is not None and rim_rect is not None:
                 iou = box_iou(box, rim_rect)
                 if iou > 0.01:
@@ -126,53 +137,50 @@ for seg in segments:
 
     arr = np.array(points)
 
-    # Step 2: Outlier removal by neighbor distance
-    # Mark as outlier if current and previous point are too far apart
-    neighbor_mask = [True]
-    for i in range(1, len(arr)):
-        dist = np.linalg.norm(arr[i] - arr[i-1])
-        neighbor_mask.append(dist < DIST_THRES)
-    neighbor_mask = np.array(neighbor_mask, dtype=bool)
-    if neighbor_mask.sum() < 3:
-        neighbor_mask[:] = True  # Use all points if too few remain
+    # Step 2: Only perform outlier detection/removal on the first and last points
+    def remove_edge_outlier(arr, degree=2, std_thres=2.5):
+        """
+        Remove outlier for start/end points if they are far from the global fitted curve.
+        Keeps at least 3 points to ensure fitting is possible.
+        """
+        if len(arr) <= 3:
+            return arr
+        x = arr[:, 0]
+        y = arr[:, 1]
+        # Fit parabola to all points
+        params = np.polyfit(x, y, degree)
+        y_fit = np.polyval(params, x)
+        residuals = np.abs(y - y_fit)
+        mean = np.mean(residuals)
+        std = np.std(residuals)
+        edge_mask = np.ones(len(arr), dtype=bool)
+        # Remove first point if its residual is much larger than mean
+        if residuals[0] > mean + std_thres * std:
+            edge_mask[0] = False
+        # Remove last point if its residual is much larger than mean
+        if residuals[-1] > mean + std_thres * std:
+            edge_mask[-1] = False
+        # Ensure at least 3 points remain
+        if edge_mask.sum() < 3:
+            edge_mask[:] = True
+        return arr[edge_mask]
 
-    # Step 3: Initial parabola fit (using neighbor-filtered points)
-    xs_init = arr[neighbor_mask, 0]
-    ys_init = arr[neighbor_mask, 1]
-    params_init = fit_parabola(xs_init, ys_init)
-    ys_fit_init = params_init[0] * xs_init**2 + params_init[1] * xs_init + params_init[2]
+    arr_final = remove_edge_outlier(arr, degree=2, std_thres=2.5)
 
-    # Step 4: Outlier removal by curve residual
-    residuals = np.abs(ys_init - ys_fit_init)
-    curve_mask = residuals < RESIDUAL_THRES
-    if curve_mask.sum() < 3:
-        curve_mask[:] = True
+    # Step 3: Parabolic fit with the final filtered points
+    x = arr_final[:, 0]
+    y = arr_final[:, 1]
+    params = np.polyfit(x, y, 2)
+    fitted_func = np.poly1d(params)
 
-    # Step 5: Final parabola fit (using neighbor & curve inliers)
-    xs_final = xs_init[curve_mask]
-    ys_final = ys_init[curve_mask]
-    params_final = fit_parabola(xs_final, ys_final)
-    ys_fit_final = params_final[0] * xs_final**2 + params_final[1] * xs_final + params_final[2]
-    fitted_points = [(int(xs_final[i]), int(ys_fit_final[i])) for i in range(len(xs_final))]
+    # Step 4: Visualization and save
+    x_fit = np.linspace(arr_final[:, 0].min(), arr_final[:, 0].max(), 100)
+    y_fit = fitted_func(x_fit)
 
-    # Step 6: Save all information as JSON
-    save_path = traj_save_dir / f"segment_{seg_idx:02d}.json"
-    save_dict = {
-        "original_points": [list(map(int, pt)) for pt in arr],
-        "neighbor_inliers": [list(map(int, pt)) for pt in arr[neighbor_mask]],
-        "curve_inliers": [list(map(int, pt)) for pt in xs_final.reshape(-1, 1) if len(pt)==2], # for compatibility, can be omitted
-        "parabola_params": [float(x) for x in params_final],
-        "trajectory": [list(pt) for pt in fitted_points]
-    }
-    with open(save_path, "w") as f:
-        json.dump(save_dict, f)
-
-    # Step 7: Visualization
     plt.figure(figsize=(7, 7))
-    plt.scatter(arr[:, 0], arr[:, 1], color='blue', s=30, label='All Centers')
-    plt.scatter(xs_init, ys_init, color='orange', s=40, label='Neighbor Inliers')
-    plt.scatter(xs_final, ys_final, color='green', s=50, label='Curve Inliers')
-    plt.plot(xs_final, ys_fit_final, color='red', label='Fitted Parabola')
+    plt.scatter(arr[:, 0], arr[:, 1], color='gray', s=30, label='Raw Points')
+    plt.scatter(arr_final[:, 0], arr_final[:, 1], color='blue', s=50, label='Final Inliers')
+    plt.plot(x_fit, y_fit, color='red', label='Fitted Parabola')
     plt.gca().invert_yaxis()
     plt.title(f'Segment {seg_idx:02d} Ball Trajectory')
     plt.xlabel('X (pixel)')
@@ -183,5 +191,3 @@ for seg in segments:
     plt.close()
 
     print(f"Segment {seg_idx:02d} done.")
-
-print("All segments processed.")

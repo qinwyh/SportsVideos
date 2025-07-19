@@ -101,6 +101,11 @@ We have used the 4D-Humans method in this pipeline and cite their work as follow
 
 ## Trajectory Estimation
 
-## TODO
+**a.** Fit a parabola to the 2D coordinates of the ball detected in each frame. Fitting accuracy can be further improved through manual inspection, such as removing incorrect ball detections or manually annotating key points if necessary. The fitted trajectory is saved in `output/single_view/2d_fitted_trajectory/`
 
-**This repository is under construction.**
+```bash
+python 3_trajectory_estimation/2d_trajectory_fit.py
+```
+
+**Examples of 2D Fitted Trajectories:**
+![2D Traj Example 1](./assets/2d_traj_example.png)
