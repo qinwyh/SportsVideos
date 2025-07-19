@@ -121,6 +121,7 @@ for seg in segments:
                     if center is not None:
                         break
         if center is not None and center[0] > int(iw * 0.1):
+            # invert y axis
             points.append(center)
             boxes.append(box)
             frame_ids.append(frame_id)
@@ -173,7 +174,7 @@ for seg in segments:
     params = np.polyfit(x, y, 2)
     fitted_func = np.poly1d(params)
 
-    # Step 4: Visualization and save
+     # Step 4: Visualization and save
     x_fit = np.linspace(arr_final[:, 0].min(), arr_final[:, 0].max(), 100)
     y_fit = fitted_func(x_fit)
 
@@ -189,5 +190,18 @@ for seg in segments:
     plt.tight_layout()
     plt.savefig(traj_save_dir / f"segment_{seg_idx:02d}_fit.png")
     plt.close()
+
+    # Save JSON with all information
+    N_traj = 100  # Number of fitted points to save
+    trajectory = np.stack([x_fit, y_fit], axis=1).tolist()
+    save_dict = {
+        "original_points": [list(map(int, pt)) for pt in arr],
+        "trajectory": trajectory,
+        "parabola_params": [float(p) for p in params]
+    }
+    save_path = traj_save_dir / f"segment_{seg_idx:02d}.json"
+    with open(save_path, "w") as f:
+        json.dump(save_dict, f, indent=2)
+    print(f"Saved JSON: {save_path}")
 
     print(f"Segment {seg_idx:02d} done.")

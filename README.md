@@ -108,4 +108,25 @@ python 3_trajectory_estimation/2d_trajectory_fit.py
 ```
 
 **Examples of 2D Fitted Trajectories:**
-![2D Traj Example 1](./assets/2d_traj_example.png)
+![2D Traj Example](./assets/2d_traj_example.png)
+
+**b.** The 3D court coordinates are set according to standard basketball court dimensions. The paint/key area is defined by the following 3D coordinates (with the origin at the right baseline corner of the paint):
+
+```bash
+[0, 0, 0]
+[0, 5.8, 0]
+[4.9, 5.8, 0]
+[4.9, 0, 0]
+[0, 0, 0]    # Closed loop
+```
+
+The center of the hoop is located at (2.45, 1.2, 3.05), and the manually marked shot release position is set at (0, 4.0). The 2D fitted trajectory is mapped to the 3D court space by proportional scaling based on these reference points. The estimated 3D trajectories are saved in `output/single_view/3d_estimated_trajectory/`.
+
+```bash
+python 3_trajectory_estimation/3d_trajectory_estimation.py
+```
+
+**Examples of 3D Estimated Trajectories:**
+![3D Traj Example](./assets/3d_traj_example.png)
+
+When importing the trajectories into Blender or other 3D tools, further manual adjustment is still needed to refine accuracy. For example, you may need to slightly adjust the trajectory plane or add minor perturbations based on visual alignment with the original video
