@@ -129,4 +129,4 @@ python 3_trajectory_estimation/3d_trajectory_estimation.py
 **Examples of 3D Estimated Trajectories:**
 ![3D Traj Example](./assets/3d_traj_example.png)
 
-When importing the trajectories into Blender or other 3D tools, further manual adjustment is still needed to refine accuracy. For example, you may need to slightly adjust the trajectory plane or add minor perturbations based on visual alignment with the original video
+When importing the trajectories into Blender or other 3D tools, further manual adjustment is still needed to refine accuracy. For example, you may need to slightly adjust the trajectory plane or add minor perturbations based on visual alignment with the original video.
